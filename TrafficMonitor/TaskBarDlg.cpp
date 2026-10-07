@@ -44,7 +44,6 @@ void CTaskBarDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_RBUTTONUP()
     ON_WM_INITMENU()
-    ON_WM_MOUSEMOVE()
     ON_WM_LBUTTONDBLCLK()
     ON_WM_TIMER()
     ON_WM_PAINT()
@@ -1202,8 +1201,6 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 
 void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-
     CDialogEx::OnMouseMove(nFlags, point);
 }
 
