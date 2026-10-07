@@ -1,3 +1,7 @@
+## 本仓库首选配置（安装后使用）
+
+首选配置已收录在 [config-presets/preferred](config-presets/preferred/README.md)。编译完成后运行根目录的 ApplyPreferredSettings.cmd，即可备份现有配置、启用首选配置并重启项目目录中的宿主。安装到其他目录时，请按该目录的说明复制配置。
+
 **简体中文 | [English](./README_en-us.md)**
 
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
@@ -122,7 +126,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 关于如何开发TrafficMonitor的说明，请参见[插件开发指南 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南)。
 
-Fork增加了一个Codex用量插件示例，源码和安装说明见[CodexUsagePlugin](./CodexUsagePlugin/README.md)。
+Codex 用量插件在独立的 [TrafficMonitorPlugins 仓库](https://github.com/wang-yichun/TrafficMonitorPlugins/tree/codex/codex-usage-plugin/Plugins/CodexUsage) 维护和编译，本宿主仓库只加载其 DLL。将插件仓库生成的 `bin/x64/Release/CodexUsage.dll` 安装到宿主的 `plugins` 目录。若两个仓库位于同一父目录，运行 `RestartTrafficMonitor.cmd` 会在退出宿主后自动安装插件仓库最新编译的 DLL。
 
 要下载TrafficMonitor插件，请[点击这里](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md)。
 

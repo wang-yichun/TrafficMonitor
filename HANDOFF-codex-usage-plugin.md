@@ -1,5 +1,13 @@
 # Codex Usage TrafficMonitor 插件交接记录
 
+## 2026-10-08 当前维护规则
+
+Codex 插件只在独立的 `TrafficMonitorPlugins/Plugins/CodexUsage` 仓库维护。宿主中的重复 `CodexUsagePlugin` 目录及标准版、Lite 版解决方案中的项目引用已移除。下方涉及镜像同步、STools 安装位置和禁用状态的记录仅为历史信息。
+
+当前宿主从 `D:\Projects\TrafficMonitor\Bin\x64\Release` 启动，配置快照位于 `config-presets/preferred`，安装后运行 `ApplyPreferredSettings.cmd` 启用。重启脚本会在正常退出宿主后，将相邻插件仓库生成的 `bin/x64/Release/CodexUsage.dll` 安装到宿主 `plugins` 目录；若相邻仓库没有编译产物，则使用已经安装的 DLL。宿主构建不再编译 Codex 插件。
+
+插件包含按事件日期统计的跨午夜 Token 增量，以及合计的“亿”换算。独立插件源码是唯一修改位置。
+
 ## 当前目标
 
 将 `codex-usage-monitor` 移植为 TrafficMonitor 插件，基于 fork 仓库开发，并安装到用户正在使用的便携版 TrafficMonitor。
@@ -7,7 +15,7 @@
 ## 仓库与安装位置
 
 - 主程序源码：`D:\Projects\TrafficMonitor`
-- 插件 fork：`D:\Projects\TrafficMonitorPlugins` (`https://github.com/wang-yichun/TrafficMonitor.git`)
+- 插件 fork：`D:\Projects\TrafficMonitorPlugins` (`https://github.com/wang-yichun/TrafficMonitorPlugins.git`)
 - 插件源码：`D:\Projects\TrafficMonitorPlugins\Plugins\CodexUsage\`
 - 当前安装目录：`D:\STools\TrafficMonitor`
 - 插件安装文件：`D:\STools\TrafficMonitor\plugins\CodexUsage.dll`

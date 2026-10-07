@@ -1,0 +1,10 @@
+@echo off
+setlocal
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0RestartTrafficMonitor.ps1" -ImportSToolsSettings
+if errorlevel 1 (
+    echo.
+    echo Import failed. See the message above.
+    pause
+    exit /b 1
+)
+exit /b 0
