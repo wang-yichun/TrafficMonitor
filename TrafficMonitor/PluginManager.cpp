@@ -19,6 +19,13 @@ CPluginManager::CPluginManager()
 
 CPluginManager::~CPluginManager()
 {
+    // API 9 插件可在卸载前停止后台任务，避免线程继续执行已卸载 DLL 中的代码。
+    for (const auto& m : m_modules)
+    {
+        if (m.plugin != nullptr && m.plugin->GetAPIVersion() >= 9)
+            m.plugin->OnShutdown();
+    }
+
     //卸载插件
     for (const auto& m : m_modules)
         FreeLibrary(m.plugin_module);

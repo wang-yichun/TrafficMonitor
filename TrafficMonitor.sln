@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenHardwareMonitorApi", "O
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginDemo", "PluginDemo\PluginDemo.vcxproj", "{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodexUsagePlugin", "CodexUsagePlugin\CodexUsagePlugin.vcxproj", "{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (lite)|ARM64EC = Debug (lite)|ARM64EC
@@ -93,6 +95,30 @@ Global
 		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x64.ActiveCfg = Release|x64
 		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x64.Build.0 = Release|x64
 		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x86.ActiveCfg = Release|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|ARM64EC.ActiveCfg = Debug (lite)|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|ARM64EC.Build.0 = Debug (lite)|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|x64.ActiveCfg = Debug (lite)|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|x64.Build.0 = Debug (lite)|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|x86.ActiveCfg = Debug (lite)|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug (lite)|x86.Build.0 = Debug (lite)|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|ARM64EC.ActiveCfg = Debug|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|ARM64EC.Build.0 = Debug|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|x64.ActiveCfg = Debug|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|x64.Build.0 = Debug|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|x86.ActiveCfg = Debug|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Debug|x86.Build.0 = Debug|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|ARM64EC.ActiveCfg = Release|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|ARM64EC.Build.0 = Release|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|x64.ActiveCfg = Release|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|x64.Build.0 = Release|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|x86.ActiveCfg = Release|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release|x86.Build.0 = Release|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|ARM64EC.ActiveCfg = Release (lite)|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|ARM64EC.Build.0 = Release (lite)|ARM64EC
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|x64.ActiveCfg = Release (lite)|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|x64.Build.0 = Release (lite)|x64
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|x86.ActiveCfg = Release (lite)|Win32
+		{F620BD03-A6EC-4F3E-9A89-82F2A8EFA1AB}.Release (lite)|x86.Build.0 = Release (lite)|Win32
 		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

@@ -183,7 +183,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 8; }
+    virtual int GetAPIVersion() const { return 9; }
 
     /**
      * @brief   获取插件显示项目的对象
@@ -341,6 +341,12 @@ public:
      * @param   pApp
      */
     virtual void OnInitialize(ITrafficMonitor* pApp) {}
+
+    /**
+     * @brief 插件即将卸载时调用。需要后台线程的插件应在此停止并等待线程退出。
+     * @detail API 9 新增。主程序只会对 API 版本大于等于 9 的插件调用此函数。
+     */
+    virtual void OnShutdown() {}
 };
 
 
@@ -612,5 +618,7 @@ public:
 *     7       | 新增 ITMPlugin::OnInitialize 函数
 * -------------------------------------------------------------------------
 *     8       | 新增 IPluginItem::DrawItemEx, IPluginItem::IsDoubleLineExclusive 函数
+* -------------------------------------------------------------------------
+*     9       | 新增 ITMPlugin::OnShutdown 插件关闭回调
 * -------------------------------------------------------------------------
 */
