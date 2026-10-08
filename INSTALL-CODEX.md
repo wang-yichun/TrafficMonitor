@@ -11,6 +11,7 @@
 - 插件唯一源码：插件仓库的 `Plugins/CodexUsage`。不要在宿主仓库恢复一份插件镜像。
 - 宿主的 `config-presets/preferred` 是用户选定的安装后配置，包含便携模式和 `CodexUsageQuota9` 显示项。
 - 宿主的 `InstallFromRepos.ps1` 会分别构建宿主和插件，自动把独立插件 DLL 安装到宿主安装目录的 `plugins` 下。
+- 插件构建还生成 `bin/x64/Release/calendar/*.txt`；安装脚本自动复制到 `plugins/calendar`，只补充缺少的年份，不覆盖用户编辑过的年度表。2026 年已包含官方放假及补班数据；2027 年暂不提供预测表。
 
 默认克隆到同一父目录，优先使用 `D:\Projects`。没有 D 盘时使用 `%USERPROFILE%\Projects`。默认直接在宿主仓库根目录运行：`D:\Projects\TrafficMonitor`，无 D 盘时为 `%USERPROFILE%\Projects\TrafficMonitor`。运行 EXE、DLL、配置和运行资源与源码同目录；宿主源码和构建输出仍位于各自子目录。安装脚本默认使用 `$PSScriptRoot`，无需指定 `-InstallDirectory`。
 

@@ -68,6 +68,7 @@ using System.Runtime.InteropServices;
 public static class TrafficMonitorRestartWindow {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern IntPtr FindWindow(string className, string title);
+    public static IntPtr FindMainWindow() { return FindWindow("TrafficMonitor_r7XZaS4p", null); }
     [DllImport("user32.dll")]
     public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
     [DllImport("user32.dll", SetLastError = true)]
@@ -75,7 +76,7 @@ public static class TrafficMonitorRestartWindow {
     public static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
 }
 '@
-    $window = [TrafficMonitorRestartWindow]::FindWindow('TrafficMonitor_r7XZaS4p', $null)
+    $window = [TrafficMonitorRestartWindow]::FindMainWindow()
     if ($window -ne [IntPtr]::Zero) {
         [uint32]$monitorProcessId = 0
         [void][TrafficMonitorRestartWindow]::GetWindowThreadProcessId($window, [ref]$monitorProcessId)
@@ -112,6 +113,17 @@ public static class TrafficMonitorRestartWindow {
                 throw 'Installed Codex plugin does not match the independent build.'
             }
             Write-Host "Installed independent plugin: $pluginBuild"
+        }
+        $calendarSource = Join-Path (Split-Path $pluginBuild) 'calendar'
+        if (Test-Path -LiteralPath $calendarSource -PathType Container) {
+            $calendarDestination = Join-Path (Split-Path $pluginDll) 'calendar'
+            New-Item -ItemType Directory -Path $calendarDestination -Force | Out-Null
+            foreach ($file in Get-ChildItem -LiteralPath $calendarSource -Filter '*.txt' -File) {
+                $target = Join-Path $calendarDestination $file.Name
+                if (-not (Test-Path -LiteralPath $target)) {
+                    Copy-Item -LiteralPath $file.FullName -Destination $target
+                }
+            }
         }
     }
 

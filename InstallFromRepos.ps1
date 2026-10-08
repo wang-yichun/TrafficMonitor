@@ -72,11 +72,12 @@ using System;
 using System.Runtime.InteropServices;
 public static class TrafficMonitorInstallWindow {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern IntPtr FindWindow(string cls, string title);
+    public static IntPtr FindMainWindow() { return FindWindow("TrafficMonitor_r7XZaS4p", null); }
     [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid);
     [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wp, IntPtr lp);
 }
 '@
-    $window = [TrafficMonitorInstallWindow]::FindWindow('TrafficMonitor_r7XZaS4p', $null)
+    $window = [TrafficMonitorInstallWindow]::FindMainWindow()
     if ($window -ne [IntPtr]::Zero) {
         [uint32]$monitorProcessId = 0
         [void][TrafficMonitorInstallWindow]::GetWindowThreadProcessId($window, [ref]$monitorProcessId)
@@ -133,6 +134,18 @@ public static class TrafficMonitorInstallWindow {
     $installedPlugin = Join-Path $pluginsDirectory 'CodexUsage.dll'
     Copy-Item -LiteralPath $pluginOutput -Destination $installedPlugin -Force
     if ((Get-FileHash -LiteralPath $pluginOutput).Hash -ne (Get-FileHash -LiteralPath $installedPlugin).Hash) { throw 'Installed plugin hash does not match the independent build.' }
+    $calendarSource = Join-Path (Split-Path $pluginOutput) 'calendar'
+    if (Test-Path -LiteralPath $calendarSource -PathType Container) {
+        $calendarDestination = Join-Path $pluginsDirectory 'calendar'
+        New-Item -ItemType Directory -Path $calendarDestination -Force | Out-Null
+        foreach ($file in Get-ChildItem -LiteralPath $calendarSource -Filter '*.txt' -File) {
+            $target = Join-Path $calendarDestination $file.Name
+            # Calendar files are user-editable; upgrades only add missing years.
+            if (-not (Test-Path -LiteralPath $target)) {
+                Copy-Item -LiteralPath $file.FullName -Destination $target
+            }
+        }
+    }
     # New installs get the preferred configuration. Upgrades preserve existing choices by default.
     $newSettings = -not (Test-Path -LiteralPath (Join-Path $InstallDirectory 'config.ini')) -and
         -not (Test-Path -LiteralPath (Join-Path $InstallDirectory 'global_cfg.ini'))
