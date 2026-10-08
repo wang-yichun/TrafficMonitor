@@ -7,8 +7,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 try {
-    $targetExe = Join-Path $PSScriptRoot 'Bin\x64\Release\TrafficMonitor.exe'
-    $pluginDll = Join-Path $PSScriptRoot 'Bin\x64\Release\plugins\CodexUsage.dll'
+    Import-Module Microsoft.PowerShell.Utility -ErrorAction Stop
+    $targetExe = Join-Path $PSScriptRoot 'TrafficMonitor.exe'
+    $pluginDll = Join-Path $PSScriptRoot 'plugins\CodexUsage.dll'
     $pluginBuild = Join-Path (Split-Path $PSScriptRoot) 'TrafficMonitorPlugins\bin\x64\Release\CodexUsage.dll'
     foreach ($file in @($targetExe)) {
         if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
@@ -148,7 +149,7 @@ public static class TrafficMonitorRestartWindow {
         Write-Host "Imported settings from $settingsSource. Previous destination data: $backup"
     }
 
-    $started = Start-Process -FilePath $targetExe -WorkingDirectory (Split-Path $targetExe) -PassThru
+    $started = Start-Process -FilePath $targetExe -WorkingDirectory (Split-Path $targetExe) -WindowStyle Hidden -PassThru
     Start-Sleep -Seconds 2
     $started.Refresh()
     if ($started.HasExited) { throw 'The new TrafficMonitor process exited immediately.' }

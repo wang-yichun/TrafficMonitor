@@ -294,6 +294,17 @@ __pycache__/
 *.dat
 *.bak
 /TrafficMonitor/skins/test*
+## Runtime files installed in the host repository root.
+/TrafficMonitor.exe
+/TrafficMonitor.sys
+/*.dll
+/plugins/
+/language/
+/skins/
+/Logo/
+/FAQ.url
+/Home.url
+/TrafficMonitor.VisualElementsManifest.xml
 [Dd]ebug (without temperature)/
 [Rr]elease (without temperature)/
 [Dd]ebug (lite)/

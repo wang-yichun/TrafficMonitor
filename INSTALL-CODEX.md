@@ -12,7 +12,7 @@
 - 宿主的 `config-presets/preferred` 是用户选定的安装后配置，包含便携模式和 `CodexUsageQuota9` 显示项。
 - 宿主的 `InstallFromRepos.ps1` 会分别构建宿主和插件，自动把独立插件 DLL 安装到宿主安装目录的 `plugins` 下。
 
-默认克隆到同一父目录，优先使用 `D:\Projects`。没有 D 盘时使用用户目录下的 `Projects`。安装目录独立于源码仓库；优先 `D:\STools\TrafficMonitor`，没有 D 盘则用 `%LOCALAPPDATA%\Programs\TrafficMonitor`。脚本自身默认使用后者，可通过参数指定前者。
+默认克隆到同一父目录，优先使用 `D:\Projects`。没有 D 盘时使用 `%USERPROFILE%\Projects`。默认直接在宿主仓库根目录运行：`D:\Projects\TrafficMonitor`，无 D 盘时为 `%USERPROFILE%\Projects\TrafficMonitor`。运行 EXE、DLL、配置和运行资源与源码同目录；宿主源码和构建输出仍位于各自子目录。安装脚本默认使用 `$PSScriptRoot`，无需指定 `-InstallDirectory`。
 
 ## 安装前检查
 
@@ -34,16 +34,16 @@ git clone --branch codex/codex-usage-plugin https://github.com/wang-yichun/Traff
 
 ## 自动构建和安装
 
-先只检查路径和构建工具：
+先只检查路径和构建工具。下面命令以 D 盘为例；无 D 盘时把两个仓库路径改为 `%USERPROFILE%\Projects` 下的对应路径：
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonitor\InstallFromRepos.ps1 -PluginRepository D:\Projects\TrafficMonitorPlugins -InstallDirectory D:\STools\TrafficMonitor -ValidateOnly
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonitor\InstallFromRepos.ps1 -PluginRepository D:\Projects\TrafficMonitorPlugins -ValidateOnly
 ```
 
 首次安装并明确应用用户的首选配置：
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonitor\InstallFromRepos.ps1 -PluginRepository D:\Projects\TrafficMonitorPlugins -InstallDirectory D:\STools\TrafficMonitor -ApplyPreferredSettings
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonitor\InstallFromRepos.ps1 -PluginRepository D:\Projects\TrafficMonitorPlugins -ApplyPreferredSettings
 ```
 
 参数说明：
@@ -57,9 +57,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonit
 - `-SkipStart`：安装后暂不启动，便于静态检查。
 - `-ValidateOnly`：检查前置条件，不构建、不复制、不关闭进程、不启动宿主。
 
-脚本先构建两个仓库，成功后向当前 TrafficMonitor 主窗口发送 `WM_CLOSE`，等待正常保存配置并退出。若宿主已提权，安装脚本也要在管理员 PowerShell 中运行；遇到拒绝访问时不要强杀，以免丢失设置和历史。若源码目录的旧构建宿主正在运行导致链接器锁文件，先正常退出它再构建。
+脚本先构建两个仓库，成功后向当前 TrafficMonitor 主窗口发送 `WM_CLOSE`，等待正常保存配置并退出。默认目标是宿主仓库根目录；若宿主已提权，安装脚本也要在管理员 PowerShell 中运行；遇到拒绝访问时不要强杀，以免丢失设置和历史。若源码目录的旧构建宿主正在运行导致链接器锁文件，先正常退出它再构建。
 
-已有安装目录会完整备份到 `%LOCALAPPDATA%\TrafficMonitor-install-backups\时间戳`。更新采用合并复制，不删除目标目录独有的文件，不覆盖流量历史，不删除其他插件。独立插件会自动复制，并核对 SHA256。语言和内置皮肤来自宿主仓库；标准版同时复制硬件监控依赖 DLL。新安装使用便携模式后，`config.ini`、`global_cfg.ini` 与 EXE 同目录。
+默认安装到宿主仓库根目录时，脚本只备份根目录的 EXE、DLL、INI、`history*.dat*`、`TrafficMonitor.VisualElementsManifest.xml`，以及 `language`、`skins`、`Logo`、`plugins` 运行目录，保存到 `%LOCALAPPDATA%\TrafficMonitor-install-backups\时间戳`；`config-presets` 和源码不会进入这份备份。显式指定其他安装目录时仍执行原有整目录备份。更新采用合并复制，不删除目标目录独有的文件，不覆盖流量历史，不删除其他插件。独立插件会自动复制，并核对 SHA256。语言和内置皮肤来自宿主仓库；标准版同时复制硬件监控依赖 DLL。新安装使用便携模式后，`config.ini`、`global_cfg.ini` 与 EXE 同目录。
 
 ## 必须完成的验收
 
@@ -70,13 +70,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\Projects\TrafficMonit
 5. 用当前电脑登录 Codex。插件读取该用户 `%CODEX_HOME%\auth.json`，未设置时读取 `%USERPROFILE%\.codex\auth.json`。不要复制另一台电脑的登录凭据，不要打印、提交或保存访问令牌。
 6. 没有当天 Token 事件时为 0 是合理结果；执行一次真实 Codex 任务、等待插件刷新后再核验。配额网络请求失败与本地 Token 读取是不同问题，应分别检查。
 7. 字体、网卡、硬盘和屏幕尺寸可能不同；保留首选样式，按新电脑情况调整硬件/位置。首选配置中的网卡是自动选择模式。
-8. 不自动改开机启动。用户需要时再把启动任务或快捷方式指向新安装路径，避免旧版本仍从 STools 或其他目录启动。
+8. 不自动改开机启动。用户需要时再把启动任务或快捷方式指向 `D:\Projects\TrafficMonitor\TrafficMonitor.exe`（无 D 盘时使用 `%USERPROFILE%\Projects\TrafficMonitor\TrafficMonitor.exe`），避免旧版本仍从其他目录启动。
 
 构建和哈希检查不等同于真实任务栏、弹窗或新电脑干净安装验收。最后报告已完成项和仍需用户交互的项目，不要声称未做过的 UI 检查已通过。
 
 ## 后续更新与回滚
 
-更新两个仓库后，再运行同一安装命令，通常不带 `-ApplyPreferredSettings`。在宿主源码目录内体验时可用 `RestartTrafficMonitor.cmd`，它会安装相邻插件仓库最新编译的 DLL；这个快捷脚本默认重启 `Bin\x64\Release`，不是任意安装目录。独立安装目录的更新使用 `InstallFromRepos.ps1`。
+更新两个仓库后，再运行同一安装命令，通常不带 `-ApplyPreferredSettings`。`RestartTrafficMonitor.cmd` 默认启动宿主仓库根目录的 `TrafficMonitor.exe`，并安装相邻插件仓库最新编译的 DLL；它不启动 `Bin\x64\Release` 中的构建副本。独立指定目录的更新使用 `InstallFromRepos.ps1` 的 `-InstallDirectory` 参数。
 
 回滚前正常退出宿主，把相应备份中的旧 EXE、依赖 DLL、Codex 插件和配置恢复到安装目录，再启动。保留更新期间产生的流量历史，除非用户明确要求回滚历史数据。
 

@@ -320,18 +320,25 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
     ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
     if (theApp.m_taskbar_data.show_status_bar && plugin != nullptr && plugin->GetAPIVersion() >= 6)
     {
-        if (item->IsDrawResourceUsageGraph())
+        const int graph_type = item->IsDrawResourceUsageGraph();
+        if (graph_type != 0)
         {
-             int figure_value = item->GetResourceUsageGraphValue() * 100;
-            //横向滚动图
-            if (theApp.m_taskbar_data.cm_graph_type)
+            int figure_value = item->GetResourceUsageGraphValue() * 100;
+            // 2 always draws a horizontal status bar; other nonzero values keep the legacy setting.
+            if (graph_type != 2 && theApp.m_taskbar_data.cm_graph_type)
             {
                 AddHisToList(item, figure_value);
                 TryDrawGraph(drawer, rect, item);
             }
-            //柱状图
             else
             {
+                if (graph_type == 2)
+                {
+                    const COLORREF& bk{ theApp.m_taskbar_data.back_color };
+                    const int background_brightness{ (GetRValue(bk) + GetGValue(bk) + GetBValue(bk)) / 3 };
+                    const COLORREF track_color = background_brightness < 128 ? RGB(82, 91, 101) : RGB(194, 202, 211);
+                    drawer.FillRect(rect, track_color);
+                }
                 TryDrawStatusBar(drawer, rect, figure_value);
             }
         }
@@ -354,6 +361,11 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
     {
         plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"1");
+        const bool draw_resource_usage_graph = plugin->GetAPIVersion() >= 6
+            && theApp.m_taskbar_data.show_status_bar
+            && item->IsDrawResourceUsageGraph() == 2;
+        plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_RESOURCE_USAGE_GRAPH,
+            draw_resource_usage_graph ? L"1" : L"0");
     }
     if (item->IsCustomDraw())
     {

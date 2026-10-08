@@ -1,6 +1,6 @@
 param(
     [string]$PluginRepository = (Join-Path (Split-Path $PSScriptRoot) 'TrafficMonitorPlugins'),
-    [string]$InstallDirectory = (Join-Path $env:LOCALAPPDATA 'Programs\TrafficMonitor'),
+    [string]$InstallDirectory = $PSScriptRoot,
     [ValidateSet('Standard', 'Lite')][string]$Edition = 'Standard',
     [switch]$ApplyPreferredSettings,
     [switch]$SkipBuild,
@@ -25,12 +25,16 @@ try {
     foreach ($path in @($solution, $pluginProject, (Join-Path $preset 'config.ini'), (Join-Path $preset 'global_cfg.ini'))) {
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Required source file is missing: $path" }
     }
-    # Keep installed binaries separate from source and build directories.
+    # Allow the host repository root or an external install directory, but not source subdirectories or the plugin repository.
+    $hostRepositoryRoot = [IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
     foreach ($sourceRoot in @($PSScriptRoot, $PluginRepository)) {
         $sourcePrefix = [IO.Path]::GetFullPath($sourceRoot).TrimEnd('\') + '\'
-        if ($InstallDirectory.TrimEnd('\') -eq $sourcePrefix.TrimEnd('\') -or
-            $InstallDirectory.StartsWith($sourcePrefix, [StringComparison]::OrdinalIgnoreCase)) {
-            throw 'Use an installation directory outside both source repositories.'
+        $isHostRepositoryRoot = $sourceRoot -eq $PSScriptRoot -and
+            $InstallDirectory.TrimEnd('\').Equals($hostRepositoryRoot, [StringComparison]::OrdinalIgnoreCase)
+        if (-not $isHostRepositoryRoot -and
+            ($InstallDirectory.TrimEnd('\').Equals($sourcePrefix.TrimEnd('\'), [StringComparison]::OrdinalIgnoreCase) -or
+             $InstallDirectory.StartsWith($sourcePrefix, [StringComparison]::OrdinalIgnoreCase))) {
+            throw 'Install in the host repository root or outside both source repositories; source subdirectories and the plugin repository are not valid targets.'
         }
     }
     $msbuild = $null
@@ -90,8 +94,22 @@ public static class TrafficMonitorInstallWindow {
         $backupRoot = Join-Path $env:LOCALAPPDATA 'TrafficMonitor-install-backups'
         $backup = Join-Path $backupRoot (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
         New-Item -ItemType Directory -Path $backup -Force | Out-Null
-        foreach ($item in Get-ChildItem -LiteralPath $InstallDirectory -Force) {
-            Copy-Item -LiteralPath $item.FullName -Destination $backup -Recurse -Force
+        if ($InstallDirectory.TrimEnd('\').Equals($hostRepositoryRoot, [StringComparison]::OrdinalIgnoreCase)) {
+            foreach ($pattern in @('*.exe', '*.dll', '*.ini', 'history*.dat*', 'TrafficMonitor.VisualElementsManifest.xml')) {
+                foreach ($item in Get-ChildItem -LiteralPath $InstallDirectory -Filter $pattern -File -Force) {
+                    Copy-Item -LiteralPath $item.FullName -Destination $backup -Force
+                }
+            }
+            foreach ($folder in @('language', 'skins', 'Logo', 'plugins')) {
+                $item = Get-Item -LiteralPath (Join-Path $InstallDirectory $folder) -ErrorAction SilentlyContinue
+                if ($item -and $item.PSIsContainer) {
+                    Copy-Item -LiteralPath $item.FullName -Destination $backup -Recurse -Force
+                }
+            }
+        } else {
+            foreach ($item in Get-ChildItem -LiteralPath $InstallDirectory -Force) {
+                Copy-Item -LiteralPath $item.FullName -Destination $backup -Recurse -Force
+            }
         }
         Write-Host "Previous installation backup: $backup"
     }
@@ -126,7 +144,7 @@ public static class TrafficMonitorInstallWindow {
     Write-Host "Installed host and independent Codex plugin at: $InstallDirectory"
     Write-Host "Plugin SHA256: $((Get-FileHash -LiteralPath $installedPlugin).Hash)"
     if (-not $SkipStart) {
-        Start-Process -FilePath (Join-Path $InstallDirectory 'TrafficMonitor.exe') -WorkingDirectory $InstallDirectory | Out-Null
+        Start-Process -FilePath (Join-Path $InstallDirectory 'TrafficMonitor.exe') -WorkingDirectory $InstallDirectory -WindowStyle Hidden | Out-Null
     }
     exit 0
 }
