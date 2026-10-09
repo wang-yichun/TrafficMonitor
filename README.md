@@ -1,5 +1,7 @@
 ## 本仓库首选配置（安装后使用）
 
+后续智能体继续开发插件前，请先阅读 [插件开发与协作约定](docs/插件开发指南.md)：其中记录两个仓库的职责、已确认的需求与显示表现、数据语义及交付验收标准。
+
 其他电脑由 Codex 安装时，请读取 [INSTALL-CODEX.md](INSTALL-CODEX.md)。[InstallFromRepos.ps1](InstallFromRepos.ps1) 会从两个仓库分别构建宿主和插件，并自动安装插件。
 
 首选配置已收录在 [config-presets/preferred](config-presets/preferred/README.md)。编译完成后运行根目录的 ApplyPreferredSettings.cmd，即可备份现有配置、启用首选配置并重启项目目录中的宿主。安装到其他目录时，请按该目录的说明复制配置。
