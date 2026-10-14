@@ -305,6 +305,8 @@ __pycache__/
 /FAQ.url
 /Home.url
 /TrafficMonitor.VisualElementsManifest.xml
+/.codex-tmp/
+/plugin-backups/
 [Dd]ebug (without temperature)/
 [Rr]elease (without temperature)/
 [Dd]ebug (lite)/
